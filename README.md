@@ -1,8 +1,5 @@
 # Cryptonite: A Cryptic Crossword Benchmark for Extreme Ambiguity in Language
 
-### Alternative Title
-Cryptonite: How I Stopped Worrying and Learned(?) to Love Ambiguity :black_large_square::white_large_square::detective:
-
 ### tl;dr
 
 Current NLP datasets targeting ambiguity can be solved by a native speaker with relative ease.
@@ -14,3 +11,6 @@ Cryptonite is a challenging task for current models; fine-tuning T5-Large on 470
 ### Paper
 
 https://arxiv.org/pdf/2103.01242.pdf
+
+### Alternative Title
+Cryptonite: How I Stopped Worrying and Learned(?) to Love Ambiguity :black_large_square::white_large_square::detective:
