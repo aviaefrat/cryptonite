@@ -24,7 +24,8 @@ def merge_publisher_specific_preprocessed_data(per_publisher_preprocessed_data_d
 
 
 def dedup_same_clue_same_answer(df):
-
+    """ For the reasoning behind this implementation, see the `remove_duplicates` notebook
+    """
     df = df.sort_values(by=['date', 'publisher'], axis='index')
     num_entries_before_dedup = len(df)
     print(f"# entries before removing (clue, answer) duplicates: {num_entries_before_dedup}")
@@ -36,7 +37,8 @@ def dedup_same_clue_same_answer(df):
 
 
 def dedup_same_clue_different_answer(df):
-
+    """ For the reasoning behind this implementation, see the `remove_duplicates` notebook
+    """
     num_entries_before_dedup = len(df)
     print(f"# entries before removing all identical clues with different answers: {num_entries_before_dedup}")
     df = df[~df.duplicated('clue', keep=False)]

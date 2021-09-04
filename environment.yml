@@ -162,7 +162,6 @@ dependencies:
     - itsdangerous==1.1.0
     - jmespath==0.9.5
     - joblib==0.14.1
-    - jsonnet==0.15.0
     - jsonpickle==1.3
     - kiwisolver==1.1.0
     - matplotlib==3.2.1

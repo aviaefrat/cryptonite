@@ -11,14 +11,16 @@ from cryptonite.preprocessing.common import (
 
 
 def standardize_html(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_standardize_html` notebook
+    """
     df['clue'] = df['clue'].apply(html.unescape).apply(html.unescape)
     df['answer'] = df['answer'].apply(html.unescape)
     return df
 
 
 def standardize_enumeration(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_enumeration` notebook
+    """
     df['enumeration'] = df['enumeration'].str.replace(' ', '')
     df['enumeration'] = df['enumeration'].str.replace('-', ',')
     df['enumeration'] = '(' + df['enumeration'] + ')'
@@ -29,19 +31,22 @@ def standardize_enumeration(df):
 
 
 def validate_enumeration(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_enumeration` notebook
+    """
     return df
 
 
 def standardize_orientation(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_orientation` notebook
+    """
     df['orientation'] = df['orientation'].str.lower()
 
     return df
 
 
 def validate_orientation(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_orientation` notebook
+    """
     # I'm writing this line even if currently all the orientations are valid
     df = df[(df['orientation'] == 'across') | (df['orientation'] == 'down')]
 
@@ -49,7 +54,8 @@ def validate_orientation(df):
 
 
 def standardize_answers(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_standardize_answer` notebook
+    """
     df['answer'] = df['answer'].str.lower()
     df['answer'] = df['answer'].str.replace(' ', '')
     df['answer'] = df['answer'].str.replace('-', '')
@@ -58,7 +64,8 @@ def standardize_answers(df):
 
 
 def validate_answers(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_validate_answers` notebook
+    """
     # only allow certain characters in answer
     df = df[~df['answer'].str.contains(invalid_answer_pattern)]
 
@@ -90,7 +97,8 @@ def validate_answers(df):
 
 
 def standardize_clues(df):
-
+    """ For the reasoning behind this implementation, see the `telegraph_standardize_clues` notebook
+    """
     # make lowercase
     df['clue'] = df['clue'].str.lower()
 
@@ -110,7 +118,8 @@ def standardize_clues(df):
 
 
 def validate_clues(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_validate_clues` notebook
+    """
     # assume clues were validated
 
     # remove multi-part clues
@@ -127,14 +136,16 @@ def validate_clues(df):
 
 
 def assign_quickness(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_quickness` notebook
+    """
     df['quick'] = df['title'].str.contains("Quick")
 
     return df
 
 
 def assign_publisher(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_publisher` notebook
+    """
     df['sub_publisher'] = df['publisher']
     df['publisher'] = "Times"
 
@@ -142,14 +153,15 @@ def assign_publisher(df):
 
 
 def standardize_dates(df):
-
+    """ For the reasoning behind this implementation, see the `the-times_standardize_dates` notebook
+    """
     df['date'] = pd.to_datetime(df['date'], format=standard_date_format)
     return df
 
 
 def preprocess(input_path, output_path=None):
-    """For now the logic of the Telegraph and Times preprocessing is separate, even though it
-    is almost the same, and could be easily made identical"""
+    """For now I'm keeping the logic of the Telegraph and Times preprocess seperate, even thought it
+    is almost the same, and can be easily made identical"""
 
     df = load_scraped_df('the-times', input_path=input_path)
     num_entries_before_preprocessing = len(df)

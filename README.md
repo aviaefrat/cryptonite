@@ -12,5 +12,15 @@ Cryptonite is a challenging task for current models; fine-tuning T5-Large on 470
 
 https://arxiv.org/pdf/2103.01242.pdf
 
+### Get the Data
+
+To respect the intellectual property of the crosswords' authors, we only provide a script for downloading the data. Using the script requires a subscription for [The Times](https://globalstore.thetimes.co.uk/?ILC=INTL-TNL_The_Times-Conversion_Page-Homepage-2020) and/or [The Telegraph](https://puzzles.telegraph.co.uk/subscribe?icid=puzzles_reg_subnavbar). Please do not use the data for commercial purposes and do not distribute it without permission.
+
+```
+# download the data from both The Times and The Telegraph
+python cryptonite/scraping/scraper.py
+```
+
+
 ### Alternative Title
 Cryptonite: How I Stopped Worrying and Learned(?) to Love Ambiguity :black_large_square::white_large_square::detective:
