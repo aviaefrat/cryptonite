@@ -3,12 +3,11 @@ import urllib.parse
 import arrow
 from bs4 import BeautifulSoup
 
-from cryptonite.scraping.telegraph.client import client
-
 
 class MultiLinksIterator:
 
-    def __init__(self, p_from, p_to):
+    def __init__(self, start_date, end_date, client):
+        self.client = client
         self.date_fmt = 'DD/MM/YYYY'
 
         # the code below is basically optimization to avoid making a single request
@@ -16,8 +15,8 @@ class MultiLinksIterator:
         # a month query, instead of a day query, reducing the number of requests
         # greatly
 
-        start = arrow.get(p_from, self.date_fmt)
-        end = arrow.get(p_to, self.date_fmt)
+        start = arrow.get(start_date, self.date_fmt)
+        end = arrow.get(end_date, self.date_fmt)
         all_days = list(arrow.Arrow.range('day', start, end))
 
         month_ranges = {}
@@ -43,30 +42,31 @@ class MultiLinksIterator:
 
     def iterate(self):
         for day in self.standalone_days:
-            print(f'Running day iterator: {day.format(self.date_fmt)}')
             links_iterator = LinksIterator(
                 date_day=day.day,
                 date_month=day.month,
                 date_year=day.year,
+                client=self.client,
             )
             yield from links_iterator.iterate()
         for month in self.full_months:
-            print(f'Running month iterator: {month.format(self.date_fmt)}')
             links_iterator = LinksIterator(
                 date_month=month.month,
                 date_year=month.year,
+                client=self.client,
             )
             yield from links_iterator.iterate()
 
 
 class LinksIterator:
 
-    def __init__(self, date_day=0, date_month=0, date_year=0, page=0):
+    def __init__(self, date_day=0, date_month=0, date_year=0, client=None):
         # paging starts at 0
-        self.start_page = page or 0
+        self.start_page = 0
         self.date_day = date_day
         self.date_month = date_month
         self.date_year = date_year
+        self.client = client
 
     def iterate(self):
         current_page = self.start_page
@@ -89,7 +89,7 @@ class LinksIterator:
             'puzzle-date-month': self.date_month,
             'puzzle-date-year': self.date_year,
         }
-        return client.post(url, params=params)
+        return self.client.post(url, params=params)
 
     @staticmethod
     def extract_links_from_raw_page(raw_page):
@@ -104,15 +104,3 @@ class LinksIterator:
             final_link = f'{parsed_link.scheme}://{parsed_link.netloc}{parsed_link.path}?puzzle_id={puzzle_id}'
             result.append(final_link)
         return result
-
-
-def main():
-    p_from = '01/02/2020'
-    p_to = '06/02/2020'
-    iterator = MultiLinksIterator(p_from=p_from, p_to=p_to)
-    for link in iterator.iterate():
-        print(f'link: {link}')
-
-
-if __name__ == '__main__':
-    main()

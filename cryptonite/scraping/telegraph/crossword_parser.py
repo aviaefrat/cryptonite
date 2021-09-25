@@ -4,18 +4,16 @@ from datetime import datetime
 import pandas as pd
 from bs4 import BeautifulSoup
 
-from cryptonite.scraping.telegraph.client import client
-
-
 logger = logging.getLogger('telegraph')
 
 
-def fetch_raw_crossword_pages(puzzle_id):
+def fetch_raw_crossword_pages(puzzle_id, client):
     # use the print version
     # with the same url you can one time get the clue and by setting the param "action"
     # to be "solution" you get the answers
     url = 'https://puzzles.telegraph.co.uk/print_crossword'
     params = {'id': puzzle_id}
+    print(f"Getting crossword from {url}?id={puzzle_id}")
     clues_text = client.get(url, params=params)
     answers_text = client.get(url, params={**params, 'action': 'solution'})
     return clues_text, answers_text
@@ -84,25 +82,13 @@ def extract_entires_from_raw_pages(puzzle_url, puzzle_id, clues_raw_page, answer
     return result
 
 
-def fetch_crossword_entries(puzzle_url):
+def fetch_crossword_entries(puzzle_url, client):
     # we build the final url so we know that puzzle url contains a single query parameter: puzzle_id
     puzzle_id = puzzle_url.split('=')[-1]
-    clues_raw_page, answers_raw_page = fetch_raw_crossword_pages(puzzle_id)
+    clues_raw_page, answers_raw_page = fetch_raw_crossword_pages(puzzle_id, client)
     return extract_entires_from_raw_pages(
         puzzle_url=puzzle_url,
         puzzle_id=puzzle_id,
         clues_raw_page=clues_raw_page,
         answers_raw_page=answers_raw_page,
     )
-
-
-def main():
-    puzzle_id = '40870'
-    puzzle_url = f'https://puzzles.telegraph.co.uk/puzzle?puzzle_id={puzzle_id}'
-    data = fetch_crossword_entries(puzzle_url)
-    import pprint
-    pprint.pprint(data)
-
-
-if __name__ == '__main__':
-    main()

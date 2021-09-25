@@ -1,19 +1,17 @@
-import html
 import logging
 import json
 from datetime import datetime
 
 from bs4 import BeautifulSoup
 
-from cryptonite.scraping.the_times.client import client
-
 
 logger = logging.getLogger('the-times')
 
 
-def fetch_raw_crossword_page(page_id):
+def fetch_raw_crossword_page(page_id, client):
     url = f'https://www.thetimes.co.uk/puzzleclub/crosswordclub/play/crossword/{page_id}'
     params = {'header': 'false'}
+    print(f"Getting crossword from {url}")
     return client.get(url, params=params)
 
 
@@ -79,7 +77,7 @@ def clean_and_extract_raw_page_data(puzzle_url, raw_page_data):
 
                 result.append({
                     'url': puzzle_url,
-                    # TODO there are two entries in the scraped data with an odd urls.
+                    # TODO there are two entries in the scraped data with an odd url.
                     #  https://www.thetimes.co.uk/puzzleclub/crosswordclub/puzzles/crossword/history38822
                     #  https://www.thetimes.co.uk/puzzleclub/crosswordclub/puzzles/crossword/history38850
                     #  Understand and fix
@@ -106,19 +104,8 @@ def clean_and_extract_raw_page_data(puzzle_url, raw_page_data):
     return result
 
 
-def fetch_crossword_entries(puzzle_url):
+def fetch_crossword_entries(puzzle_url, client):
     page_id = puzzle_url.split('/')[-1]
-    raw_page = fetch_raw_crossword_page(page_id)
+    raw_page = fetch_raw_crossword_page(page_id, client)
     raw_page_data = extract_raw_crossword_page_data(raw_page)
     return clean_and_extract_raw_page_data(puzzle_url, raw_page_data)
-
-
-def main():
-    puzzle_url = 'https://www.thetimes.co.uk/puzzleclub/crosswordclub/puzzles/crossword/41395'
-    data = fetch_crossword_entries(puzzle_url)
-    import pprint
-    pprint.pprint(data)
-
-
-if __name__ == '__main__':
-    main()

@@ -1,0 +1,25 @@
+{
+  "data_sources": [
+    {
+      "publisher": "the_times",
+      "start_date": "16/10/2000",
+      "end_date": "31/10/2020",
+      "authentication": {
+        "acs_tnl": "",
+        "sacs_tnl": "",
+        "remember_puzzleclub_key": "",
+          "remember_puzzleclub_value": ""
+      }
+    },
+    {
+      "publisher": "the_telegraph",
+      "start_date": "26/11/2001",
+      "end_date": "31/10/2020",
+      "authentication": {
+        "rememberme": "",
+        "details": ""
+      }
+    }
+  ],
+  "output_dir": "data"
+}
