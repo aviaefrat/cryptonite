@@ -189,7 +189,3 @@ def preprocess(input_path, output_path=None):
         print(f'successfully saved!')
 
     return df
-
-
-if __name__ == '__main__':
-    preprocess(None, output_path='../data/the-times_preprocessed.jsonl')

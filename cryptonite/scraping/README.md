@@ -30,3 +30,8 @@ To respect the intellectual property of the crosswords' authors, we provide a sc
    ```
    python -m cryptonite.scraping.scraper
    ```
+   
+5. Preprocess the data:
+   ```
+   python -m cryptonite.preprocessing.preprocess
+   ```

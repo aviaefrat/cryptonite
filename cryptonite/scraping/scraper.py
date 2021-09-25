@@ -3,12 +3,10 @@ import argparse
 import json
 import os
 
+from cryptonite.defaults import V1_CONFIGURATION_PATH, DATA_DIR
 from cryptonite.scraping.loggers import setup_loggers
 from cryptonite.scraping.telegraph.scraper import Scraper as TelegraphScraper
 from cryptonite.scraping.the_times.scraper import Scraper as TheTimesScraper
-
-CRYPTONITE_DIR = Path(__file__).parent.joinpath("../..")
-CRYPTONITE_V1_CONFIGURATION_PATH = CRYPTONITE_DIR.joinpath('configs/scraping/cryptonite_v1.json').resolve()
 
 
 publisher_to_scraper = {
@@ -43,7 +41,7 @@ def scrape(publisher, start_date, end_date, output_dir, authentication):
 def _load_configuration(path):
     # if no config is given, use the original cryptonite config (v1)
     if path is None:
-        path = CRYPTONITE_V1_CONFIGURATION_PATH
+        path = V1_CONFIGURATION_PATH
         print(f"No config file given. Defaulting to the original Cryptonite configuration (v1) at {path}.")
         if not path.is_file():
             raise FileNotFoundError(f"Original Cryptonite configuration not found at {path}. Aborting.")
@@ -85,9 +83,8 @@ def _load_configuration(path):
 
     # deal with a missing output dir
     if not config.get("output_dir"):
-        default_output_dir = CRYPTONITE_DIR.joinpath('data')
-        print(f"No output dir given. Defaulting to {default_output_dir}")
-        config["output_dir"] = default_output_dir
+        print(f"No output dir given. Defaulting to {DATA_DIR}")
+        config["output_dir"] = DATA_DIR
 
     return config
 

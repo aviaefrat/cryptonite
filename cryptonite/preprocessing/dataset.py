@@ -1,26 +1,6 @@
-import os
-
 import pandas as pd
 
-from cryptonite.preprocessing.common import default_dtypes, save_df_as_jsonl
-
-
-def merge_publisher_specific_preprocessed_data(per_publisher_preprocessed_data_dir,
-                                               output_path=None):
-
-    preprocessed_paths = [entry.path for entry in os.scandir(per_publisher_preprocessed_data_dir)
-                          if entry.name.endswith('_preprocessed.jsonl')]
-
-    dfs_to_merge = [pd.read_json(p, orient='columns', dtype=default_dtypes,
-                                 lines=True)
-                    for p in preprocessed_paths]
-
-    df = pd.concat(dfs_to_merge, axis='index', ignore_index=True)
-
-    if output_path is not None:
-        save_df_as_jsonl(df, output_path)
-
-    return df
+from cryptonite.preprocessing.common import save_df_as_jsonl
 
 
 def dedup_same_clue_same_answer(df):
@@ -48,18 +28,24 @@ def dedup_same_clue_different_answer(df):
     return df
 
 
-def preprocess(per_publisher_preprocessed_data_dir='../data/', output_path='../data/dataset.jsonl'):
+def add_enumeration_to_clue(row):
+    clue = row['clue']
+    enumeration = row['enumeration']
+    return f"{clue} {enumeration}"
 
-    df = merge_publisher_specific_preprocessed_data(
-        per_publisher_preprocessed_data_dir,
-        output_path='../data/merged_per_publisher_preprocessing.jsonl')
+
+def preprocess(publisher_dfs, output_path, add_enumeration=True):
+
+    df = pd.concat(publisher_dfs, axis='index', ignore_index=True)
 
     df = dedup_same_clue_same_answer(df)
     df = dedup_same_clue_different_answer(df)
 
+    # add enumeration
+    if add_enumeration:
+        df['clue'] = df.apply(lambda row: add_enumeration_to_clue(row), axis=1)
+
     save_df_as_jsonl(df, output_path)
-    print(f'successfully saved as {output_path}')
+    print(f'successfully created {output_path}')
 
-
-if __name__ == '__main__':
-    preprocess()
+    return df

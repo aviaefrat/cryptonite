@@ -62,17 +62,16 @@ def split_by_answer(df, val_ratio, test_ratio, seed):
     return train_df, val_df, test_df
 
 
-def create_splits(dataset_path, split_name, n_versions=3, seed=1407):
+def create_splits(df, split_name, output_dir, enumeration_modifier, n_versions=1, seed=1407):
 
     split_func = split_mapping[split_name]
 
-    df = pd.read_json(dataset_path, orient='columns', lines=True)
     for i in range(n_versions):
         seed = seed + i
         train_df, val_df, test_df = split_func(df, val_ratio=0.05, test_ratio=0.05, seed=seed)
 
-        version = chr(ord('@') + i + 1)
-        save_split(split_name, train_df, val_df, test_df, version)
+        version = "" if n_versions == 1 else chr(ord('@') + i + 1)
+        save_split(split_name, train_df, val_df, test_df, output_dir, enumeration_modifier, version)
 
 
 def _get_non_quick_df(df):
@@ -85,8 +84,8 @@ def _get_non_quick_df(df):
     return non_quick_df
 
 
-def create_to_non_quick_splits(dataset_path, n_val_versions=3, val_ratio=0.05, test_ratio=0.05,
-                               seed=1407):
+def _create_to_non_quick_splits(dataset_path, n_val_versions=3, val_ratio=0.05, test_ratio=0.05,
+                                seed=1407):
 
     df = pd.read_json(dataset_path, orient='columns', lines=True)
 
@@ -125,8 +124,8 @@ def create_to_non_quick_splits(dataset_path, n_val_versions=3, val_ratio=0.05, t
         save_df_as_jsonl(non_quick_to_non_quick_train, f'data/non-quick_to_non-quick_split_{version}_train.jsonl')
 
 
-def create_to_quick_splits(dataset_path, n_val_versions=3, val_ratio=0.05, test_ratio=0.05,
-                           seed=1407):
+def _create_to_quick_splits(dataset_path, n_val_versions=3, val_ratio=0.05, test_ratio=0.05,
+                            seed=1407):
 
     df = pd.read_json(dataset_path, orient='columns', lines=True)
 
@@ -172,8 +171,8 @@ def create_to_quick_splits(dataset_path, n_val_versions=3, val_ratio=0.05, test_
         save_df_as_jsonl(non_quick_to_quick_train_df, f'data/non-quick_to_quick_split_{version}_train.jsonl')
 
 
-def create_publisher_answer_splits(dataset_path, n_versions_per_publisher=3,
-                                   val_ratio=0.05, test_ratio=0.05, seed=1407):
+def _create_publisher_answer_splits(dataset_path, n_versions_per_publisher=3,
+                                    val_ratio=0.05, test_ratio=0.05, seed=1407):
 
     df = pd.read_json(dataset_path, orient='columns', lines=True)
 
@@ -200,20 +199,26 @@ def create_publisher_answer_splits(dataset_path, n_versions_per_publisher=3,
             save_split(split_name, train_df, val_df, test_df, version)
 
 
-def save_split(name, train_df, val_df, test_df, version=""):
+def save_split(name, train_df, val_df, test_df, output_dir, enumeration_modifier, version):
+
+    if name != 'answer_split':
+        name = f"{name}_"
+    else:
+        name = ''
 
     if version != '':
         version = f"{version}_"
 
+    if enumeration_modifier != '':
+        enumeration_modifier = f"{enumeration_modifier}_"
+
     for part, part_df in (('train', train_df), ('val', val_df), ('test', test_df)):
-        save_df_as_jsonl(part_df, f'data/{name}_{version}{part}.jsonl')
+        filename = f'{name}{enumeration_modifier}{version}{part}.jsonl'
+        output_path = output_dir.joinpath(filename)
+        save_df_as_jsonl(part_df, output_path)
 
 
 split_mapping = {
     'random_split': split_randomly,
     'answer_split': split_by_answer
 }
-
-
-if __name__ == '__main__':
-    pass
