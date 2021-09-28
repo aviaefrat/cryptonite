@@ -16,7 +16,7 @@ Each example in Cryptonite is a _cryptic clue_, a short phrase or sentence with 
 Cryptic clues pose a challenge even for experienced solvers, though top-tier experts can solve them with almost 100% accuracy.
 Cryptonite is a challenging task for current models; fine-tuning T5-Large on 470k cryptic clues achieves only 7.6% accuracy, on par with the accuracy of a rule-based clue solver (8.6%).
 
-### Getting the Data
+### Get the Data
 
 Follow the [scraping README](https://github.com/aviaefrat/cryptonite/blob/main/cryptonite/scraping/README.md).
 
