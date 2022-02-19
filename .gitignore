@@ -142,4 +142,4 @@ cython_debug/
 
 # Repo-specific
 big-bench/
-data/
+data/raw/
